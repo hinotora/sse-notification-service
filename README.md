@@ -1,0 +1,3 @@
+# SSE Notification service
+
+... WIP ...

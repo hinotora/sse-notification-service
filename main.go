@@ -11,8 +11,6 @@ import (
 	"github.com/hinotora/sse-notification-service/internal/router"
 )
 
-var Logger *logger.Logger = nil
-
 func main() {
 	c, err := config.Load()
 
@@ -20,20 +18,20 @@ func main() {
 		panic(err)
 	}
 
-	Logger := logger.New()
+	logger.Instance = logger.New()
 
 	internal.PrintStart()
-	internal.PrintConf(Logger, c)
+	internal.PrintConf(logger.Instance, c)
 
 	_, err = redis.Load(c)
 
 	if err != nil {
-		Logger.Fatal(fmt.Sprintf("Error connecting to Redis: %s", err))
+		logger.Instance.Fatal(fmt.Sprintf("Error connecting to Redis: %s", err))
 	}
 
 	repository.Init()
 
 	err = router.Run()
 
-	Logger.Fatal(fmt.Sprintf("Server error: %s", err))
+	logger.Instance.Fatal(fmt.Sprintf("Server error: %s", err))
 }

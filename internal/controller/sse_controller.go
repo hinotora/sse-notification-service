@@ -39,6 +39,7 @@ loop:
 		case msg := <-connection.BroadcastCh:
 			data, _ := json.Marshal(msg.Data)
 
+			fmt.Fprintf(w, "id: %s\n", msg.Id)
 			fmt.Fprintf(w, "event: %s\n", msg.Mtype)
 			fmt.Fprintf(w, "data: %s", string(data))
 			fmt.Fprint(w, "\n\n")

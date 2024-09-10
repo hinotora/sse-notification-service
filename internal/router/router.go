@@ -1,10 +1,8 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/hinotora/sse-notification-service/internal/config"
 	"github.com/hinotora/sse-notification-service/internal/controller"
 	"github.com/hinotora/sse-notification-service/internal/middleware"
 )
@@ -32,7 +30,7 @@ func Run() error {
 	mux.Handle("GET /connections/{application_id}", middleware.CheckAuth(http.HandlerFunc(controller.GetApplicationConnections)))
 	mux.Handle("GET /connections/{application_id}/{user_id}", middleware.CheckAuth(http.HandlerFunc(controller.GetUserConnections)))
 
-	err := http.ListenAndServe(fmt.Sprintf(":%s", config.GetInstance().App.Port), mux)
+	err := http.ListenAndServe(":80", mux)
 
 	return err
 }

@@ -2,16 +2,25 @@ package internal
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/hinotora/sse-notification-service/internal/config"
 	"github.com/hinotora/sse-notification-service/internal/logger"
 )
 
 func PrintStart() {
+	ver := "unknown"
+
+	if buf, err := os.ReadFile("version"); err != nil {
+		ver = "err_version_not_found"
+	} else {
+		ver = string(buf)
+	}
+
 	fmt.Println()
 	fmt.Println("Go Websocket notification microservice")
-	fmt.Println("Visit: https://github.com/hinotora")
-	fmt.Println("Version: 0.1.0")
+	fmt.Println("Visit: https://github.com/hinotora/sse-notification-service")
+	fmt.Printf("Version: %s \n", ver)
 }
 
 func PrintConf(logger *logger.Logger, config *config.Config) {

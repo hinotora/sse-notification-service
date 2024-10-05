@@ -31,6 +31,9 @@ func main() {
 
 	repository.Init()
 
+	fmt.Print("\n\n")
+	logger.Instance.Info("Init sequence completed. Ready to accept connections. \n\n")
+
 	err = router.Run()
 
 	logger.Instance.Fatal(fmt.Sprintf("Server error: %s", err))

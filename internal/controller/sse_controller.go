@@ -46,7 +46,7 @@ loop:
 
 			flusher.Flush()
 
-			logger.Debug(fmt.Sprintf("Outgoing: TYPE=%s DATA=%s", msg.Mtype, data))
+			logger.Debug(fmt.Sprintf("Outgoing: ID=%s TYPE=%s DATA=%s", msg.Id, msg.Mtype, data))
 
 			continue
 		case <-connection.CloseCh:

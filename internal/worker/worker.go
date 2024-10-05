@@ -41,10 +41,9 @@ writer:
 			conn.BroadcastCh <- *msg
 
 		case <-conn.PingCh:
-			conn.BroadcastCh <- *message.NewMessage(nil, message.TYPEPING)
+			conn.BroadcastCh <- *message.NewMessage("1", nil, "ping")
 		case <-conn.CloseCh:
 			break writer
-
 		}
 
 	}

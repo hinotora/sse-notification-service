@@ -1,108 +1,235 @@
 # SSE Notification service
 
-!!!!!!!!README STILL IN PROGRESS!!!!!!!
+Socket service using SSE to deliver some kinds of events
 
-Golang + redis pubsub
+## What is SSE?
+
+Server-Sent Events (SSE) is networking technology that allows servers to push real-time client updates over a single HTTP connection
+
+![image](https://bunnyacademy.b-cdn.net/What-is-SSE-Server-Sent-Events-and-how-do-they-work.svg)
+
+There are a lot of examples and information about, for example [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).
 
 
-## Clone & Build
+## What is this microservice about?
+
+This service is a standalone docker-compose application which allows you to add SSE functionality to your project. For example you want to addsome king of notifications into yout website or use browser push notifications. This micrioservice might help you.
+
+## Installing
+
+### Requirements
+
+- git
+- docker 
+- ~600MB of free space (for docker images)
+
+This service by default uses its own `Redis` if you dont want it just edit docker compose file and edit .env file
+
+### Cloning, configuring and building
 
 ```bash
+    # clone code into your working folder
     $ git clone https://github.com/hinotora/sse-notification-service.git
 
+    # cd into it
     $ cd sse-notification-service
 
+    # copy environment file
     $ cp .env.example .env
+```
 
-    # Configure env ny you own requirements
+Next you need to configure environment variables (open .env file with any editor)
 
+```bash
+    # Application name, used to give names to docker containers to avoid collisions, may be whatever you want
+    APP_NAME=sse-service 
+
+    # External port, application will listen connections on this port
+    APP_PORT=8080
+
+    # App mode, allows you to get more debug data in logs, for silent use `production`
+    APP_MODE=debug
+
+    # Redis host and port, used to connect to redis bus
+    REDIS_HOST=redis
+    REDIS_PORT=6379
+
+    # Secret key to verify JWT signatures, must be same here and on the issuser service (for example auth service)
+    JWT_SECRET=my-secret-key
+```
+
+And finally build image
+
+```bash
+    # build docker images
     $ make build
 ```
 
-## Run
+After successfull build you can run application
 
 ```bash
     make up
 ```
 
-## Authorization
+## Usage
+
+### Routes
+
+Postman collection is [there](docs/examples/sse_notification_service.postman_collection.json)
+
+```bash
+    # =======================================================================
+    # Health endpoint
+    GET /health
+
+
+    200 OK
+    Content-Type: application/json
+
+    {
+        "status": "ok"
+    }
+
+    # =======================================================================
+    # Main SSE socket. Used to connect via SSE
+    GET /sse
+    Authorization: Bearer jwt
+
+
+    200 OK
+    Content-Type: text/event-stream
+    X-Connection-Id: be91753e-0200-4c6d-8805-f98ee6760667
+
+    ... sse data here
+
+    # =======================================================================
+    # Get all connections assosicated with one application (iss)
+    GET /connections/{application_id}
+    Authorization: Bearer jwt
+
+
+    200 OK
+    Content-Type: application/json
+
+    {
+        "user-id-1": {
+            "connection-id-1": {
+                "id": "connection-id-1",
+                "created_at": 1728135324,
+                "remote_addr": "",
+                "application": {
+                    "id": "app-id-1"
+                },
+                "user": {
+                    "id": "user-id-1"
+                }
+            },
+        },
+        "user-id-2": {
+            "connection-id-1": {
+                "id": "connection-id-1",
+                "created_at": 17281324234,
+                "remote_addr": "",
+                "application": {
+                    "id": "app-id-1"
+                },
+                "user": {
+                    "id": "user-id-2"
+                }
+            },
+        }
+    }
+
+    # =======================================================================
+    # Get all connection assosicated with one application (iss) and user (sub)
+    GET /connections/{application_id}/{user_id}
+    Authorization: Bearer jwt
+
+
+    200 OK
+    Content-Type: application/json
+    {
+        "connection-id-1": {
+            "id": "connection-id-1",
+            "created_at": 1728132343,
+            "remote_addr": "",
+            "application": {
+                "id": "app-id-1"
+            },
+            "user": {
+                "id": "user-id-1"
+            }
+        },
+        "connection-id-2": {
+            "id": "connection-id-2",
+            "created_at": 1728132342,
+            "remote_addr": "",
+            "application": {
+                "id": "app-id-1"
+            },
+            "user": {
+                "id": "user-id-1"
+            }
+        }
+    }
+```
+
+### Authorization
+
+Service uses JWT (HS256) auth on protected routes. Payload must be:
 
 ```json
-
-// You need to send following JWT payload with sign (sing must be same in .env and JWT)
-// HS256 algo
-
 {
-  "sub": "2-user-2",
-  "iss": "1-stand-1",
+  "sub": "user-id-1",
+  "iss": "app-id-1",
   "iat": 1725895592,
   "exp": 1728476792
 }
 
 ```
 
-## Usage
+### Data transfer
 
-1. Start to listen SSE connection 
+#### 1. Start to listen SSE connection 
 
-```bash
-$ curl -i  http://localhost:8081/sse -H 'Authorization: Bearer jwt
+![image](docs/examples/images/im1.png)
 
-HTTP/1.1 200 OK
-Access-Control-Allow-Origin: *
-Access-Control-Expose-Headers: Content-Type
-Cache-Control: no-cache
-Connection: keep-alive
-Content-Type: text/event-stream
-X-Connection-Id: 37f347f6-de41-4e1a-be0d-fa0f420f630a
-Date: Tue, 10 Sep 2024 15:49:27 GMT
-Transfer-Encoding: chunked
+As you can see curl waits for incoming data and NOT closes conenction.
 
-```
+#### 2. Explore and find active SSE connections via redis
 
-2. Explore and find active connections
+After successfull SSE connection service creates redis hash set which contains data about connection. After SSE disconnect key will be deleted. Lets explore data:
 
-```bash
+![image](docs/examples/images/im2.png)
 
-    127.0.0.1:6379> KEYS *
+#### 3. Send message into channel
 
-    1) "1-stand-1:client:2-user-2" # <--- existing sse connection
+![image](docs/examples/images/im3.png)
 
-    127.0.0.1:6379> HGETALL 1-stand-1:client:2-user-2
-    1) "channel_id" 
-    2) "1-stand-1:channel:2-user-2" # <--- channel name
-    3) "application_id"
-    4) "1-stand-1"
-    5) "user_id"
-    6) "2-user-2"
+#### 4. Receive data from client side
 
-```
+![image](docs/examples/images/im4.png)
 
-3. Send message into choosen channel
+Service also sends ping events every 30 seconds. This can be used as client-side service healthcheck.
+
+## Other actions
 
 ```bash
-    # redis-cli
-    127.0.0.1:6379> PUBLISH 1-stand-1:channel:2-user-2 '{"id":"2", "type":"event", "data":{"hello":"world"}}'
+    # Restart service
+    make restart 
+
+    # Stop service
+    make down
+
+    # Read and follow service logs (Ctrl + C to exit)
+    make logs
 ```
 
-```bash
+### Logs example:
 
-# curl output
+![image](docs/examples/images/im5.png)
 
-id: cc5d30d2-8148-4868-89ea-ddb428a4fdcc
-event: ping
-data: null
 
-id: 2
-event: event
-data: {"hello":"world"}
+## License
 
-```
-
-## Stopping
-
-```bash
-    make restart # to restart
-
-    make down # to stop and delete containers
-```
+There is no license. But please create link to this repo, i would appreciate this :)

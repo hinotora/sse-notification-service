@@ -16,8 +16,9 @@ func Run() error {
 			return
 		}
 
-		w.WriteHeader(http.StatusMovedPermanently)
 		w.Header().Add("Location", "/health")
+		w.WriteHeader(http.StatusMovedPermanently)
+
 	})
 
 	// Хэндлер эндпоинта проверки жив ли сервис

@@ -1,0 +1,337 @@
+{
+	"info": {
+		"_postman_id": "993eb639-c000-43a4-9e87-0a0131606e92",
+		"name": "SSE Notification Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15796075"
+	},
+	"item": [
+		{
+			"name": "SSE Connect",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/sse",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"sse"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "App connections",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/connections/:appID",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"connections",
+						":appID"
+					],
+					"variable": [
+						{
+							"key": "appID",
+							"value": "app-id-1"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "200 OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:{{port}}/connections/:appID",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"connections",
+								":appID"
+							],
+							"variable": [
+								{
+									"key": "appID",
+									"value": "app-id-1"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 05 Oct 2024 13:26:55 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "199"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"user-id-1\": {\n        \"9ab5e09a-aa0e-47e9-b2f0-d299923fc0b0\": {\n            \"id\": \"9ab5e09a-aa0e-47e9-b2f0-d299923fc0b0\",\n            \"created_at\": 1728134779,\n            \"remote_addr\": \"\",\n            \"application\": {\n                \"id\": \"app-id-1\"\n            },\n            \"user\": {\n                \"id\": \"user-id-1\"\n            }\n        }\n    }\n}"
+				},
+				{
+					"name": "204 No Content",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:{{port}}/connections/:appID",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"connections",
+								":appID"
+							],
+							"variable": [
+								{
+									"key": "appID",
+									"value": "unknown"
+								}
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 05 Oct 2024 13:27:30 GMT"
+						}
+					],
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "User connections",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/connections/:appID/:userID",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"connections",
+						":appID",
+						":userID"
+					],
+					"variable": [
+						{
+							"key": "appID",
+							"value": "app-id-1"
+						},
+						{
+							"key": "userID",
+							"value": "user-id-1"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "200 OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/connections/:appID/:userID",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"connections",
+								":appID",
+								":userID"
+							],
+							"variable": [
+								{
+									"key": "appID",
+									"value": "app-id-1"
+								},
+								{
+									"key": "userID",
+									"value": "user-id-1"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 05 Oct 2024 13:28:04 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "185"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"9ab5e09a-aa0e-47e9-b2f0-d299923fc0b0\": {\n        \"id\": \"9ab5e09a-aa0e-47e9-b2f0-d299923fc0b0\",\n        \"created_at\": 1728134779,\n        \"remote_addr\": \"\",\n        \"application\": {\n            \"id\": \"app-id-1\"\n        },\n        \"user\": {\n            \"id\": \"user-id-1\"\n        }\n    }\n}"
+				},
+				{
+					"name": "204 No Content",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/connections/:appID/:userID",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"connections",
+								":appID",
+								":userID"
+							],
+							"variable": [
+								{
+									"key": "appID",
+									"value": "unknown"
+								},
+								{
+									"key": "userID",
+									"value": "unknown"
+								}
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 05 Oct 2024 13:28:51 GMT"
+						}
+					],
+					"cookie": [],
+					"body": null
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "jwt",
+		"jwt": [
+			{
+				"key": "payload",
+				"value": "{\n  \"sub\": \"user-id-1\",\n  \"iss\": \"app-id-1\",\n  \"iat\": {{$timestamp}},\n  \"exp\": 1917426115\n}",
+				"type": "string"
+			},
+			{
+				"key": "secret",
+				"value": "my-secret-key",
+				"type": "string"
+			},
+			{
+				"key": "algorithm",
+				"value": "HS256",
+				"type": "string"
+			},
+			{
+				"key": "isSecretBase64Encoded",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "headerPrefix",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "queryParamKey",
+				"value": "token",
+				"type": "string"
+			},
+			{
+				"key": "header",
+				"value": "{}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "port",
+			"value": "8080",
+			"type": "string"
+		}
+	]
+}

@@ -5,10 +5,28 @@ services:
         context: .
         dockerfile: Dockerfile
     image: "sse-notification-service-app"
-    restart: always
+    restart: on-failure
+    depends_on:
+      redis:
+        condition: service_healthy
+        restart: true
     ports:
       - '${APP_PORT}:80'
+    volumes:
+      - '.env:/app/.env'
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://app/health || exit 1
+      interval: 30s
+      retries: 5
+      timeout: 5s
+      start_period: 5s
   redis:
     image: redis
     restart: always
     container_name: redis_${APP_NAME}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 60s
+      retries: 5
+      timeout: 5s
+      start_period: 5s

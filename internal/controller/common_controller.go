@@ -16,6 +16,7 @@ func Health(w http.ResponseWriter, r *http.Request) {
 
 	json, _ := json.Marshal(response)
 
+	w.Header().Add("Content-Type", "application/json")
 	w.Write(json)
 }
 
@@ -37,6 +38,7 @@ func GetApplicationConnections(w http.ResponseWriter, r *http.Request) {
 		logger.Error(fmt.Sprintf("get conn app list err: %s", err))
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.Write(write)
 }
 
@@ -59,5 +61,6 @@ func GetUserConnections(w http.ResponseWriter, r *http.Request) {
 		logger.Error(fmt.Sprintf("get conn app list err: %s", err))
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.Write(write)
 }
